@@ -15,7 +15,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         rebase_date = self.parse_rebase_date(args[0])
-        now = timezone.now()
+        now = timezone.now().date()
         delta = now - rebase_date
 
         self.ignores = getattr(settings, 'DEMO_DATE_RESET_IGNORES', { })
@@ -24,7 +24,7 @@ class Command(BaseCommand):
             klass = model.model_class()
             fields = self.get_date_fields_for_klass(klass)
             if fields:
-                updates_kwargs = dict([
+                update_kwargs = dict([
                     (field_name, F(field_name) + delta) for field_name in fields
                     ])
                 klass.objects.update(**update_kwargs)
